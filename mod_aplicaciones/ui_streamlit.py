@@ -15,10 +15,17 @@ DATA_FILENAME = "Aplicaciones_permitidas.xlsx"
 # RUTAS (CORRECTAS)
 # =========================
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
+# Funciona tanto local como en Streamlit Cloud
+for path in [
+    os.path.abspath(os.path.join(BASE_DIR, "..")),      # Streamlit Cloud
+    os.path.abspath(os.path.join(BASE_DIR, "..", "..")), # Local
+]:
+    if path not in sys.path:
+        sys.path.insert(0, path)
+
 PROJECT_ROOT = os.path.abspath(os.path.join(BASE_DIR, "..", ".."))
-SCRIPTS_DIR = os.path.join(PROJECT_ROOT, "Scripts")
-if SCRIPTS_DIR not in sys.path:
-    sys.path.append(SCRIPTS_DIR)
+SCRIPTS_DIR = os.path.abspath(os.path.join(BASE_DIR, ".."))
 
 from itkc.config import load_settings
 from itkc.repo_excel import ExcelCatalogoRepo

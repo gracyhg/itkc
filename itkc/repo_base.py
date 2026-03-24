@@ -1,0 +1,6 @@
+from typing import Protocol
+import pandas as pd
+
+class CatalogoRepo(Protocol):
+    def cargar(self) -> pd.DataFrame: ...
+    def guardar(self, df: pd.DataFrame) -> None: ...

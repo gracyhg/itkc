@@ -129,7 +129,7 @@ def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
         st.error(f"Error de conexión: {e}")
         return None
 def render_login(settings):
-    st.title("🔐 IT Knowledge Core")
+    st.title(" IT Knowledge Core")
     st.subheader("Iniciar sesión")
 
     correo = st.text_input("Correo corporativo", key="login_correo")
@@ -137,7 +137,7 @@ def render_login(settings):
 
     if st.button("Ingresar"):
         if not correo.endswith("@techcrg.com"):
-            st.error("Solo se permiten correos @techcrg.com")
+            st.error("Tu correo no pertenece a @techcrg.com")
             return
         usuario = verificar_login(correo, password, settings.sqlserver_conn_str)
         if usuario:
@@ -149,10 +149,10 @@ def render_login(settings):
 
     st.divider()
     col1, col2 = st.columns(2)
-    if col1.button("📝 Crear cuenta"):
+    if col1.button(" Crear cuenta"):
         st.session_state.pantalla = "registro"
         st.rerun()
-    if col2.button("🔑 Olvidé mi contraseña"):
+    if col2.button(" Olvidé mi contraseña"):
         st.session_state.pantalla = "olvide_password"
         st.rerun()
 # -------------------------
@@ -160,7 +160,7 @@ def render_login(settings):
 # -------------------------
 
 def render_registro(settings):
-    st.title("🔐 IT Knowledge Core")
+    st.title(" IT Knowledge Core")
     st.subheader("Crear cuenta")
 
     correo = st.text_input("Correo corporativo", key="reg_correo")
@@ -196,7 +196,7 @@ def render_registro(settings):
             )
             conn.commit()
             conn.close()
-            st.success("✅ Cuenta creada correctamente. Ya puedes iniciar sesión.")
+            st.success(" Cuenta creada correctamente. Ya puedes iniciar sesión.")
             st.session_state.pantalla = "login"
             st.rerun()
         except Exception as e:
@@ -236,7 +236,7 @@ def enviar_correo_reset(correo: str, token: str, api_key: str, from_email: str):
 
 
 def render_olvide_password(settings):
-    st.title("🔐 IT Knowledge Core")
+    st.title(" IT Knowledge Core")
     st.subheader("Recuperar contraseña")
 
     correo = st.text_input("Ingresa tu correo corporativo", key="reset_correo")
@@ -288,7 +288,7 @@ def render_olvide_password(settings):
 
 
 def render_nueva_password(token: str, settings):
-    st.title("🔐 IT Knowledge Core")
+    st.title(" IT Knowledge Core")
     st.subheader("Nueva contraseña")
 
     import psycopg2
@@ -340,7 +340,7 @@ def render_nueva_password(token: str, settings):
             conn.commit()
             conn.close()
 
-            st.success("✅ Contraseña actualizada. Ya puedes iniciar sesión.")
+            st.success(" Contraseña actualizada. Ya puedes iniciar sesión.")
             st.session_state.pantalla = "login"
             st.rerun()
 
@@ -438,7 +438,7 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
         "Aprueba/rechaza solicitudes y administra el catálogo (agregar/editar/eliminar)."
     )
 
-    with st.expander("🔒 Acceso Supervisor", expanded=True):
+    with st.expander(" Acceso Supervisor", expanded=True):
         pin = st.text_input("PIN Supervisor", type="password", key="pin_supervisor")
         if not pin:
             st.info("Ingresa el PIN para desbloquear el panel.")
@@ -447,12 +447,12 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
             st.error("PIN incorrecto.")
             return
 
-    show_success("Panel desbloqueado ✅")
+    show_success("Panel desbloqueado ")
 
     df_all = asegurar_columnas(st.session_state.df)
     en_rev = df_all[df_all["estado"] == ESTADO_REVISION].copy()
 
-    st.markdown("### 📊 Resumen")
+    st.markdown("###  Resumen")
     c1, c2, c3 = st.columns(3)
     c1.metric("Solicitudes en revisión", int(len(en_rev)))
     c2.metric("Total en catálogo", int(len(df_all)))
@@ -490,11 +490,11 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
             motivo = st.text_input("Motivo rechazo (solo si rechaza)", key="motivo_rechazo")
 
             col1, col2 = st.columns(2)
-            if col1.button("✅ Aprobar", key="btn_aprobar", use_container_width=True):
+            if col1.button(" Aprobar", key="btn_aprobar", use_container_width=True):
                 df2 = actualizar_decision(df_all, programa_norm_sel, True)
                 df2 = guardar_y_recargar(repo, df2)
                 st.session_state.df = asegurar_columnas(df2)
-                show_success("✅ Solicitud aprobada y guardada.")
+                show_success(" Solicitud aprobada y guardada.")
                 st.rerun()
 
             if col2.button("⛔ Rechazar", key="btn_rechazar", use_container_width=True):

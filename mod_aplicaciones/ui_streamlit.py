@@ -243,6 +243,14 @@ def render_login(settings):
         font-size: 11px;
         letter-spacing: 0.5px;
     }
+                
+    [data-testid="stSpinner"] { display: none; }
+       iframe { display: none; }
+       .stSpinner { display: none; }
+       header { display: none !important; }
+       #MainMenu { display: none; }
+       footer { display: none; }
+      .block-container { padding-top: 0 !important; }            
     </style>
     """, unsafe_allow_html=True)
 

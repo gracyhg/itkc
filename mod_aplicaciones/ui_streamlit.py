@@ -162,9 +162,9 @@ def render_login(settings):
     }
 
     .login-logo img {
-        height: 48px;
-        filter: brightness(0) invert(1);
-    }
+    height: 48px;
+}
+```
 
     .login-title {
         font-family: 'Rajdhani', sans-serif;
@@ -806,7 +806,7 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
 
 def main():
     st.set_page_config(page_title=f"{APP_TITLE} | {MODULE_TITLE}", layout="wide")
-    st.title(f"{APP_TITLE} | {MODULE_TITLE}")
+    
 
     settings = load_settings(BASE_DIR)
 

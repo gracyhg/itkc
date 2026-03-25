@@ -111,6 +111,38 @@ def show_info_header(role_title: str, caption: str):
     st.markdown(f"## {role_title}")
     st.caption(caption)
     st.divider()
+def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
+    import psycopg2, hashlib
+    try:
+        conn = psycopg2.connect(conn_str)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT correo, rol FROM usuarios WHERE correo=%s AND password_hash=md5(%s) AND activo=TRUE",
+            (correo, password)
+        )
+        row = cur.fetchone()
+        conn.close()
+        if row:
+            return {"correo": row[0], "rol": row[1]}
+        return None
+    except Exception as e:
+        st.error(f"Error de conexión: {e}")
+        return None
+def render_login(settings):
+    st.title("🔐 IT Knowledge Core")
+    st.subheader("Iniciar sesión")
+    correo = st.text_input("Correo corporativo")
+    password = st.text_input("Contraseña", type="password")
+    if st.button("Ingresar"):
+        if not correo.endswith("@techcrg.com"):
+            st.error("Solo se permiten correos @techcrg.com")
+            return
+        usuario = verificar_login(correo, password, settings.sqlserver_conn_str)
+        if usuario:
+            st.session_state.usuario = usuario
+            st.rerun()
+        else:
+            st.error("Correo o contraseña incorrectos.")   
 
 # -------------------------
 # PANTALLA AGENTE
@@ -406,6 +438,9 @@ def main():
     st.title(f"{APP_TITLE} | {MODULE_TITLE}")
 
     settings = load_settings(BASE_DIR)
+    if "usuario" not in st.session_state:
+        render_login(settings)
+        st.stop()    
 
     try:
         repo = build_repo(settings)

@@ -130,7 +130,6 @@ def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
         return None
     
 def render_login(settings):
-    # CSS personalizado
     st.markdown("""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap');
@@ -142,49 +141,12 @@ def render_login(settings):
             linear-gradient(90deg, rgba(74, 222, 128, 0.03) 1px, transparent 1px);
         background-size: 40px 40px;
     }
-
-    [data-testid="stHeader"] { background: transparent; }
+    [data-testid="stHeader"] { display: none; }
     [data-testid="stSidebar"] { display: none; }
-
-    .login-container {
-        max-width: 420px;
-        margin: 60px auto 0 auto;
-        padding: 48px 40px;
-        background: #111111;
-        border: 1px solid #1f1f1f;
-        border-top: 2px solid #4ade80;
-        box-shadow: 0 0 60px rgba(74, 222, 128, 0.05);
-    }
-
-    .login-logo {
-        text-align: center;
-        margin-bottom: 32px;
-    }
-
-    .login-logo img {
-    height: 48px;
-}
-```
-
-    .login-title {
-        font-family: 'Rajdhani', sans-serif;
-        font-size: 13px;
-        font-weight: 600;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        color: #4ade80;
-        text-align: center;
-        margin-bottom: 8px;
-    }
-
-    .login-subtitle {
-        font-family: 'Inter', sans-serif;
-        font-size: 12px;
-        color: #444;
-        text-align: center;
-        margin-bottom: 36px;
-        letter-spacing: 0.5px;
-    }
+    header { display: none !important; }
+    #MainMenu { display: none; }
+    footer { display: none; }
+    .block-container { padding-top: 2rem !important; }
 
     .stTextInput > div > div > input {
         background-color: #0a0a0a !important;
@@ -193,14 +155,11 @@ def render_login(settings):
         color: #e0e0e0 !important;
         font-family: 'Inter', sans-serif !important;
         font-size: 13px !important;
-        padding: 12px 16px !important;
     }
-
     .stTextInput > div > div > input:focus {
         border-color: #4ade80 !important;
         box-shadow: 0 0 0 1px #4ade80 !important;
     }
-
     .stTextInput label {
         font-family: 'Inter', sans-serif !important;
         font-size: 11px !important;
@@ -209,7 +168,6 @@ def render_login(settings):
         text-transform: uppercase !important;
         color: #555 !important;
     }
-
     .stButton > button {
         background-color: #4ade80 !important;
         color: #0a0a0a !important;
@@ -220,76 +178,56 @@ def render_login(settings):
         font-weight: 700 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        padding: 12px 24px !important;
         width: 100% !important;
-        transition: all 0.2s !important;
     }
-
     .stButton > button:hover {
         background-color: #86efac !important;
-        transform: translateY(-1px) !important;
     }
-
-    .divider {
-        border: none;
-        border-top: 1px solid #1f1f1f;
-        margin: 28px 0;
-    }
-
-    .login-links {
-        display: flex;
-        justify-content: space-between;
-        font-family: 'Inter', sans-serif;
-        font-size: 11px;
-        letter-spacing: 0.5px;
-    }
-                
-    [data-testid="stSpinner"] { display: none; }
-       iframe { display: none; }
-       .stSpinner { display: none; }
-       header { display: none !important; }
-       #MainMenu { display: none; }
-       footer { display: none; }
-      .block-container { padding-top: 0 !important; }            
     </style>
     """, unsafe_allow_html=True)
 
-    # Logo y encabezado
-    logo_path = os.path.join(BASE_DIR, "logo.jpg")
-    st.markdown('<div class="login-container">', unsafe_allow_html=True)
-    st.markdown('<div class="login-logo">', unsafe_allow_html=True)
-    if os.path.exists(logo_path):
-        st.image(logo_path, width=160)
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('<div class="login-title">IT Knowledge Core</div>', unsafe_allow_html=True)
-    st.markdown('<div class="login-subtitle">Acceso restringido · Solo personal autorizado</div>', unsafe_allow_html=True)
+    # Centrar con columnas
+    col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
 
-    correo = st.text_input("Correo corporativo", key="login_correo", placeholder="usuario@techcrg.com")
-    password = st.text_input("Contraseña", type="password", key="login_password", placeholder="••••••••")
+    with col_centro:
+        # Logo
+        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
+        if os.path.exists(logo_path):
+            st.image(logo_path, width=200)
 
-    if st.button("INGRESAR"):
-        if not correo.endswith("@techcrg.com"):
-            st.error("Solo se permiten correos @techcrg.com")
-            return
-        usuario = verificar_login(correo, password, settings.sqlserver_conn_str)
-        if usuario:
-            st.session_state.usuario = usuario
-            st.session_state.pantalla = "app"
+        st.markdown("""
+            <p style="font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;
+            letter-spacing:3px;text-transform:uppercase;color:#4ade80;margin:16px 0 4px 0;">
+            IT KNOWLEDGE CORE</p>
+            <p style="font-family:'Inter',sans-serif;font-size:11px;color:#444;
+            margin-bottom:28px;letter-spacing:0.5px;">
+            Acceso restringido · Solo personal autorizado</p>
+        """, unsafe_allow_html=True)
+
+        correo = st.text_input("Correo corporativo", key="login_correo", placeholder="usuario@techcrg.com")
+        password = st.text_input("Contraseña", type="password", key="login_password", placeholder="••••••••")
+
+        if st.button("INGRESAR"):
+            if not correo.endswith("@techcrg.com"):
+                st.error("Solo se permiten correos @techcrg.com")
+                return
+            usuario = verificar_login(correo, password, settings.sqlserver_conn_str)
+            if usuario:
+                st.session_state.usuario = usuario
+                st.session_state.pantalla = "app"
+                st.rerun()
+            else:
+                st.error("Correo o contraseña incorrectos.")
+
+        st.markdown("<hr style='border:none;border-top:1px solid #1f1f1f;margin:20px 0'>", unsafe_allow_html=True)
+
+        col1, col2 = st.columns(2)
+        if col1.button("Crear cuenta"):
+            st.session_state.pantalla = "registro"
             st.rerun()
-        else:
-            st.error("Correo o contraseña incorrectos.")
-
-    st.markdown('<hr class="divider">', unsafe_allow_html=True)
-
-    col1, col2 = st.columns(2)
-    if col1.button("Crear cuenta"):
-        st.session_state.pantalla = "registro"
-        st.rerun()
-    if col2.button("Olvidé mi contraseña"):
-        st.session_state.pantalla = "olvide_password"
-        st.rerun()
-
-    st.markdown('</div>', unsafe_allow_html=True)
+        if col2.button("Olvidé mi contraseña"):
+            st.session_state.pantalla = "olvide_password"
+            st.rerun()
 
 # -------------------------
 # REGISTRO

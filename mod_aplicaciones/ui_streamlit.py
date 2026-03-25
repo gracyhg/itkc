@@ -128,16 +128,140 @@ def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
     except Exception as e:
         st.error(f"Error de conexión: {e}")
         return None
+    
 def render_login(settings):
-    st.title(" IT Knowledge Core")
-    st.subheader("Iniciar sesión")
+    # CSS personalizado
+    st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@300;400;600;700&family=Inter:wght@300;400;500&display=swap');
 
-    correo = st.text_input("Correo corporativo", key="login_correo")
-    password = st.text_input("Contraseña", type="password", key="login_password")
+    [data-testid="stAppViewContainer"] {
+        background-color: #0a0a0a;
+        background-image: 
+            linear-gradient(rgba(74, 222, 128, 0.03) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(74, 222, 128, 0.03) 1px, transparent 1px);
+        background-size: 40px 40px;
+    }
 
-    if st.button("Ingresar"):
+    [data-testid="stHeader"] { background: transparent; }
+    [data-testid="stSidebar"] { display: none; }
+
+    .login-container {
+        max-width: 420px;
+        margin: 60px auto 0 auto;
+        padding: 48px 40px;
+        background: #111111;
+        border: 1px solid #1f1f1f;
+        border-top: 2px solid #4ade80;
+        box-shadow: 0 0 60px rgba(74, 222, 128, 0.05);
+    }
+
+    .login-logo {
+        text-align: center;
+        margin-bottom: 32px;
+    }
+
+    .login-logo img {
+        height: 48px;
+        filter: brightness(0) invert(1);
+    }
+
+    .login-title {
+        font-family: 'Rajdhani', sans-serif;
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        color: #4ade80;
+        text-align: center;
+        margin-bottom: 8px;
+    }
+
+    .login-subtitle {
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        color: #444;
+        text-align: center;
+        margin-bottom: 36px;
+        letter-spacing: 0.5px;
+    }
+
+    .stTextInput > div > div > input {
+        background-color: #0a0a0a !important;
+        border: 1px solid #2a2a2a !important;
+        border-radius: 0 !important;
+        color: #e0e0e0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 13px !important;
+        padding: 12px 16px !important;
+    }
+
+    .stTextInput > div > div > input:focus {
+        border-color: #4ade80 !important;
+        box-shadow: 0 0 0 1px #4ade80 !important;
+    }
+
+    .stTextInput label {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 11px !important;
+        font-weight: 500 !important;
+        letter-spacing: 1px !important;
+        text-transform: uppercase !important;
+        color: #555 !important;
+    }
+
+    .stButton > button {
+        background-color: #4ade80 !important;
+        color: #0a0a0a !important;
+        border: none !important;
+        border-radius: 0 !important;
+        font-family: 'Rajdhani', sans-serif !important;
+        font-size: 13px !important;
+        font-weight: 700 !important;
+        letter-spacing: 2px !important;
+        text-transform: uppercase !important;
+        padding: 12px 24px !important;
+        width: 100% !important;
+        transition: all 0.2s !important;
+    }
+
+    .stButton > button:hover {
+        background-color: #86efac !important;
+        transform: translateY(-1px) !important;
+    }
+
+    .divider {
+        border: none;
+        border-top: 1px solid #1f1f1f;
+        margin: 28px 0;
+    }
+
+    .login-links {
+        display: flex;
+        justify-content: space-between;
+        font-family: 'Inter', sans-serif;
+        font-size: 11px;
+        letter-spacing: 0.5px;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+    # Logo y encabezado
+    logo_path = os.path.join(BASE_DIR, "logo.jpeg")
+    st.markdown('<div class="login-container">', unsafe_allow_html=True)
+    st.markdown('<div class="login-logo">', unsafe_allow_html=True)
+    if os.path.exists(logo_path):
+        st.image(logo_path, width=160)
+    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown('<div class="login-title">IT Knowledge Core</div>', unsafe_allow_html=True)
+    st.markdown('<div class="login-subtitle">Acceso restringido · Solo personal autorizado</div>', unsafe_allow_html=True)
+
+    correo = st.text_input("Correo corporativo", key="login_correo", placeholder="usuario@techcrg.com")
+    password = st.text_input("Contraseña", type="password", key="login_password", placeholder="••••••••")
+
+    if st.button("INGRESAR"):
         if not correo.endswith("@techcrg.com"):
-            st.error("Tu correo no pertenece a @techcrg.com")
+            st.error("Solo se permiten correos @techcrg.com")
             return
         usuario = verificar_login(correo, password, settings.sqlserver_conn_str)
         if usuario:
@@ -147,17 +271,42 @@ def render_login(settings):
         else:
             st.error("Correo o contraseña incorrectos.")
 
-    st.divider()
+    st.markdown('<hr class="divider">', unsafe_allow_html=True)
+
     col1, col2 = st.columns(2)
-    if col1.button(" Crear cuenta"):
+    if col1.button("Crear cuenta"):
         st.session_state.pantalla = "registro"
         st.rerun()
-    if col2.button(" Olvidé mi contraseña"):
+    if col2.button("Olvidé mi contraseña"):
         st.session_state.pantalla = "olvide_password"
         st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
 # -------------------------
 # REGISTRO
 # -------------------------
+def enviar_correo_verificacion(correo: str, token: str, api_key: str, from_email: str):
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+
+    verify_url = f"https://itkcapp.streamlit.app?verify={token}"
+
+    mensaje = Mail(
+        from_email=from_email,
+        to_emails=correo,
+        subject="Verifica tu cuenta - IT Knowledge Core",
+        html_content=f"""
+        <p>Gracias por registrarte en IT Knowledge Core.</p>
+        <p>Haz clic en el siguiente enlace para verificar tu cuenta:</p>
+        <p><a href="{verify_url}">Verificar cuenta</a></p>
+        <p>Este enlace expira en 24 horas.</p>
+        """
+    )
+
+    sg = SendGridAPIClient(api_key)
+    sg.send(mensaje)
+
 
 def render_registro(settings):
     st.title(" IT Knowledge Core")
@@ -190,10 +339,29 @@ def render_registro(settings):
                 conn.close()
                 return
 
+            import uuid
+            token_verificacion = str(uuid.uuid4())
+
             cur.execute(
-                "INSERT INTO usuarios (correo, password_hash, rol) VALUES (%s, md5(%s), 'agente')",
-                (correo, password)
-            )
+               "INSERT INTO usuarios (correo, password_hash, rol, activo) VALUES (%s, md5(%s), 'agente', FALSE)",
+               (correo, password)
+)
+            cur.execute(
+               "INSERT INTO password_reset_tokens (correo, token, expira_en) VALUES (%s, %s, NOW() + INTERVAL '24 hours')",
+               (correo, token_verificacion)
+)
+            conn.commit()
+            conn.close()
+
+            # Enviar correo de verificación
+            api_key = os.getenv("SENDGRID_API_KEY", "")
+            from_email = os.getenv("SENDGRID_FROM_EMAIL", "")
+            enviar_correo_verificacion(correo, token_verificacion, api_key, from_email)
+
+            st.success("✅ Revisa tu correo para verificar tu cuenta.")
+            st.session_state.pantalla = "login"
+            st.rerun()
+
             conn.commit()
             conn.close()
             st.success(" Cuenta creada correctamente. Ya puedes iniciar sesión.")
@@ -643,16 +811,38 @@ def main():
     settings = load_settings(BASE_DIR)
 
     if "pantalla" not in st.session_state:
-      st.session_state.pantalla = "login"
+        st.session_state.pantalla = "login"
 
     token = st.query_params.get("token", None)
     if token and "usuario" not in st.session_state:
-      st.session_state.pantalla = "nueva_password"
-      st.session_state.reset_token = token
+        st.session_state.pantalla = "nueva_password"
+        st.session_state.reset_token = token
+
+    verify_token = st.query_params.get("verify", None)
+    if verify_token:
+        import psycopg2
+        try:
+            conn = psycopg2.connect(settings.sqlserver_conn_str)
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT correo FROM password_reset_tokens WHERE token=%s AND usado=FALSE AND expira_en > NOW()",
+                (verify_token,)
+            )
+            row = cur.fetchone()
+            if row:
+                cur.execute("UPDATE usuarios SET activo=TRUE WHERE correo=%s", (row[0],))
+                cur.execute("UPDATE password_reset_tokens SET usado=TRUE WHERE token=%s", (verify_token,))
+                conn.commit()
+                st.success("✅ Cuenta verificada. Ya puedes iniciar sesión.")
+            else:
+                st.error("El enlace es inválido o ha expirado.")
+            conn.close()
+        except Exception as e:
+            st.error(f"Error: {e}")
 
     if st.session_state.pantalla == "login" and "usuario" not in st.session_state:
-      render_login(settings)
-      st.stop()
+        render_login(settings)
+        st.stop()
     elif st.session_state.pantalla == "registro":
         render_registro(settings)
         st.stop()
@@ -661,7 +851,7 @@ def main():
         st.stop()
     elif st.session_state.pantalla == "nueva_password":
         render_nueva_password(st.session_state.get("reset_token", ""), settings)
-        st.stop()   
+        st.stop()
 
     try:
         repo = build_repo(settings)
@@ -675,10 +865,10 @@ def main():
 
     rol = st.sidebar.radio("Rol", [" Agente", " Supervisor"], index=0)
     st.sidebar.divider()
-    st.sidebar.write(f"👤 {st.session_state.usuario['correo']}")
-    if st.sidebar.button("🚪 Cerrar sesión"):
-       st.session_state.clear()
-       st.rerun()
+    st.sidebar.write(f" {st.session_state.usuario['correo']}")
+    if st.sidebar.button(" Cerrar sesión"):
+        st.session_state.clear()
+        st.rerun()
 
     with st.sidebar.expander("ℹ Diagnóstico", expanded=False):
         st.write("Backend:", settings.backend)

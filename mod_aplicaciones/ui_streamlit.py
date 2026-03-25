@@ -247,7 +247,7 @@ def render_login(settings):
     """, unsafe_allow_html=True)
 
     # Logo y encabezado
-    logo_path = os.path.join(BASE_DIR, "logo.jpeg")
+    logo_path = os.path.join(BASE_DIR, "logo.jpg")
     st.markdown('<div class="login-container">', unsafe_allow_html=True)
     st.markdown('<div class="login-logo">', unsafe_allow_html=True)
     if os.path.exists(logo_path):

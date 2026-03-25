@@ -131,8 +131,10 @@ def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
 def render_login(settings):
     st.title("🔐 IT Knowledge Core")
     st.subheader("Iniciar sesión")
-    correo = st.text_input("Correo corporativo")
-    password = st.text_input("Contraseña", type="password")
+
+    correo = st.text_input("Correo corporativo", key="login_correo")
+    password = st.text_input("Contraseña", type="password", key="login_password")
+
     if st.button("Ingresar"):
         if not correo.endswith("@techcrg.com"):
             st.error("Solo se permiten correos @techcrg.com")
@@ -140,9 +142,210 @@ def render_login(settings):
         usuario = verificar_login(correo, password, settings.sqlserver_conn_str)
         if usuario:
             st.session_state.usuario = usuario
+            st.session_state.pantalla = "app"
             st.rerun()
         else:
-            st.error("Correo o contraseña incorrectos.")   
+            st.error("Correo o contraseña incorrectos.")
+
+    st.divider()
+    col1, col2 = st.columns(2)
+    if col1.button("📝 Crear cuenta"):
+        st.session_state.pantalla = "registro"
+        st.rerun()
+    if col2.button("🔑 Olvidé mi contraseña"):
+        st.session_state.pantalla = "olvide_password"
+        st.rerun()
+# -------------------------
+# REGISTRO
+# -------------------------
+
+def render_registro(settings):
+    st.title("🔐 IT Knowledge Core")
+    st.subheader("Crear cuenta")
+
+    correo = st.text_input("Correo corporativo", key="reg_correo")
+    password = st.text_input("Contraseña", type="password", key="reg_password")
+    password2 = st.text_input("Confirmar contraseña", type="password", key="reg_password2")
+
+    if st.button("Registrarse"):
+        if not correo.endswith("@techcrg.com"):
+            st.error("Solo se permiten correos @techcrg.com")
+            return
+        if len(password) < 8:
+            st.error("La contraseña debe tener al menos 8 caracteres.")
+            return
+        if password != password2:
+            st.error("Las contraseñas no coinciden.")
+            return
+
+        import psycopg2
+        try:
+            conn = psycopg2.connect(settings.sqlserver_conn_str)
+            cur = conn.cursor()
+
+            # Verificar si ya existe
+            cur.execute("SELECT id FROM usuarios WHERE correo = %s", (correo,))
+            if cur.fetchone():
+                st.error("Ya existe una cuenta con ese correo.")
+                conn.close()
+                return
+
+            cur.execute(
+                "INSERT INTO usuarios (correo, password_hash, rol) VALUES (%s, md5(%s), 'agente')",
+                (correo, password)
+            )
+            conn.commit()
+            conn.close()
+            st.success("✅ Cuenta creada correctamente. Ya puedes iniciar sesión.")
+            st.session_state.pantalla = "login"
+            st.rerun()
+        except Exception as e:
+            st.error(f"Error al registrar: {e}")
+
+    st.divider()
+    if st.button("← Volver al login"):
+        st.session_state.pantalla = "login"
+        st.rerun()
+
+
+# -------------------------
+# RECUPERAR CONTRASEÑA
+# -------------------------
+
+def enviar_correo_reset(correo: str, token: str, api_key: str, from_email: str):
+    from sendgrid import SendGridAPIClient
+    from sendgrid.helpers.mail import Mail
+
+    reset_url = f"https://itkcapp.streamlit.app?token={token}"
+
+    mensaje = Mail(
+        from_email=from_email,
+        to_emails=correo,
+        subject="Recuperación de contraseña - IT Knowledge Core",
+        html_content=f"""
+        <p>Recibimos una solicitud para restablecer tu contraseña.</p>
+        <p>Haz clic en el siguiente enlace para crear una nueva contraseña:</p>
+        <p><a href="{reset_url}">Restablecer contraseña</a></p>
+        <p>Este enlace expira en 30 minutos.</p>
+        <p>Si no solicitaste esto, ignora este correo.</p>
+        """
+    )
+
+    sg = SendGridAPIClient(api_key)
+    sg.send(mensaje)
+
+
+def render_olvide_password(settings):
+    st.title("🔐 IT Knowledge Core")
+    st.subheader("Recuperar contraseña")
+
+    correo = st.text_input("Ingresa tu correo corporativo", key="reset_correo")
+
+    if st.button("Enviar correo de recuperación"):
+        if not correo.endswith("@techcrg.com"):
+            st.error("Solo se permiten correos @techcrg.com")
+            return
+
+        import psycopg2, uuid, hashlib
+        from datetime import timedelta
+
+        try:
+            conn = psycopg2.connect(settings.sqlserver_conn_str)
+            cur = conn.cursor()
+
+            # Verificar si el correo existe
+            cur.execute("SELECT id FROM usuarios WHERE correo = %s AND activo = TRUE", (correo,))
+            if not cur.fetchone():
+                st.error("No existe una cuenta con ese correo.")
+                conn.close()
+                return
+
+            # Crear token
+            token = str(uuid.uuid4())
+            expira = datetime.now() + timedelta(minutes=30)
+
+            cur.execute(
+                "INSERT INTO password_reset_tokens (correo, token, expira_en) VALUES (%s, %s, %s)",
+                (correo, token, expira)
+            )
+            conn.commit()
+            conn.close()
+
+            # Enviar correo
+            api_key = os.getenv("SENDGRID_API_KEY", "")
+            from_email = os.getenv("SENDGRID_FROM_EMAIL", "")
+            enviar_correo_reset(correo, token, api_key, from_email)
+
+            st.success("✅ Correo enviado. Revisa tu bandeja de entrada.")
+
+        except Exception as e:
+            st.error(f"Error: {e}")
+
+    st.divider()
+    if st.button("← Volver al login"):
+        st.session_state.pantalla = "login"
+        st.rerun()
+
+
+def render_nueva_password(token: str, settings):
+    st.title("🔐 IT Knowledge Core")
+    st.subheader("Nueva contraseña")
+
+    import psycopg2
+
+    # Verificar token
+    try:
+        conn = psycopg2.connect(settings.sqlserver_conn_str)
+        cur = conn.cursor()
+        cur.execute(
+            "SELECT correo FROM password_reset_tokens WHERE token=%s AND usado=FALSE AND expira_en > NOW()",
+            (token,)
+        )
+        row = cur.fetchone()
+        conn.close()
+
+        if not row:
+            st.error("El enlace es inválido o ha expirado.")
+            return
+
+        correo = row[0]
+
+    except Exception as e:
+        st.error(f"Error: {e}")
+        return
+
+    password = st.text_input("Nueva contraseña", type="password", key="new_pass")
+    password2 = st.text_input("Confirmar contraseña", type="password", key="new_pass2")
+
+    if st.button("Guardar nueva contraseña"):
+        if len(password) < 8:
+            st.error("La contraseña debe tener al menos 8 caracteres.")
+            return
+        if password != password2:
+            st.error("Las contraseñas no coinciden.")
+            return
+
+        try:
+            conn = psycopg2.connect(settings.sqlserver_conn_str)
+            cur = conn.cursor()
+
+            cur.execute(
+                "UPDATE usuarios SET password_hash = md5(%s) WHERE correo = %s",
+                (password, correo)
+            )
+            cur.execute(
+                "UPDATE password_reset_tokens SET usado = TRUE WHERE token = %s",
+                (token,)
+            )
+            conn.commit()
+            conn.close()
+
+            st.success("✅ Contraseña actualizada. Ya puedes iniciar sesión.")
+            st.session_state.pantalla = "login"
+            st.rerun()
+
+        except Exception as e:
+            st.error(f"Error: {e}")            
 
 # -------------------------
 # PANTALLA AGENTE
@@ -438,9 +641,27 @@ def main():
     st.title(f"{APP_TITLE} | {MODULE_TITLE}")
 
     settings = load_settings(BASE_DIR)
-    if "usuario" not in st.session_state:
-        render_login(settings)
-        st.stop()    
+
+    if "pantalla" not in st.session_state:
+      st.session_state.pantalla = "login"
+
+    token = st.query_params.get("token", None)
+    if token and "usuario" not in st.session_state:
+      st.session_state.pantalla = "nueva_password"
+      st.session_state.reset_token = token
+
+    if st.session_state.pantalla == "login" and "usuario" not in st.session_state:
+      render_login(settings)
+      st.stop()
+    elif st.session_state.pantalla == "registro":
+        render_registro(settings)
+        st.stop()
+    elif st.session_state.pantalla == "olvide_password":
+        render_olvide_password(settings)
+        st.stop()
+    elif st.session_state.pantalla == "nueva_password":
+        render_nueva_password(st.session_state.get("reset_token", ""), settings)
+        st.stop()   
 
     try:
         repo = build_repo(settings)

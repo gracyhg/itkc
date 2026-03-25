@@ -673,9 +673,14 @@ def main():
     st.sidebar.caption(f"Módulo: {MODULE_TITLE}")
     st.sidebar.caption(f"Backend: {settings.backend}")
 
-    rol = st.sidebar.radio("Rol", ["👤 Agente", "🛠 Supervisor"], index=0)
+    rol = st.sidebar.radio("Rol", [" Agente", " Supervisor"], index=0)
+    st.sidebar.divider()
+    st.sidebar.write(f"👤 {st.session_state.usuario['correo']}")
+    if st.sidebar.button("🚪 Cerrar sesión"):
+       st.session_state.clear()
+       st.rerun()
 
-    with st.sidebar.expander("ℹ️ Diagnóstico", expanded=False):
+    with st.sidebar.expander("ℹ Diagnóstico", expanded=False):
         st.write("Backend:", settings.backend)
         st.write("PROJECT_ROOT:", PROJECT_ROOT)
         st.write("SCRIPTS_DIR:", SCRIPTS_DIR)
@@ -691,7 +696,7 @@ def main():
 
     df = asegurar_columnas(st.session_state.df)
 
-    if rol == "👤 Agente":
+    if rol == " Agente":
         render_agente(df, repo)
     else:
         render_supervisor(df, repo, settings)

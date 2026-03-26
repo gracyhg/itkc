@@ -216,7 +216,7 @@ def render_login(settings):
         box-shadow: 0 0 0 1px rgba(122,196,122,0.25) !important;
     }}
     .stTextInput > div > div > input::placeholder {{
-        color: #3a4a3a !important;
+        color: #E8F5E8; !important;
     }}
     .stTextInput label {{
         font-family: 'JetBrains Mono', monospace !important;
@@ -285,6 +285,7 @@ def render_login(settings):
         text-align: center;
         margin-top: 16px;
         letter-spacing: 1px;
+        opacity: 0.7 !important;
     }}
     </style>
     """, unsafe_allow_html=True)

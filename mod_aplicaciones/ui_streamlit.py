@@ -140,91 +140,83 @@ def render_login(settings):
         with open(bg_path, "rb") as f:
             bg_b64 = base64.b64encode(f.read()).decode()
 
+    # Cargar logo en base64
+    logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
+    logo_b64 = ""
+    if os.path.exists(logo_path):
+        with open(logo_path, "rb") as f:
+            logo_b64 = base64.b64encode(f.read()).decode()
+
     st.markdown(f"""
     <style>
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500&display=swap');
 
-    [data-testid="stAppViewContainer"] {{
-        background-image: url("data:image/jpeg;base64,{bg_b64}");
-        background-size: cover;
-        background-position: center;
-        background-attachment: fixed;
+    html, body, [data-testid="stAppViewContainer"], .stApp {{
+        background-image: url("data:image/jpeg;base64,{bg_b64}") !important;
+        background-size: cover !important;
+        background-position: center !important;
+        background-attachment: fixed !important;
     }}
+
     [data-testid="stAppViewContainer"]::before {{
         content: '';
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.75);
-        backdrop-filter: blur(2px);
+        background: rgba(0, 0, 0, 0.72);
+        backdrop-filter: blur(3px);
         z-index: 0;
     }}
-    [data-testid="stHeader"] {{ display: none; }}
-    [data-testid="stSidebar"] {{ display: none; }}
-    header {{ display: none !important; }}
-    #MainMenu {{ display: none; }}
-    footer {{ display: none; }}
+
+    [data-testid="stHeader"],
+    [data-testid="stToolbar"],
+    [data-testid="stDecoration"],
+    [data-testid="stStatusWidget"],
+    .stApp > header,
+    header,
+    #MainMenu,
+    footer {{
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+    }}
+
+    .stApp {{ margin-top: 0 !important; }}
+
     .block-container {{
-        padding-top: 2rem !important;
+        padding-top: 0 !important;
+        padding-bottom: 0 !important;
         position: relative;
         z-index: 1;
     }}
 
-     .login-card {{
-        background: rgba(8, 12, 8, 0.82);
-        border: 1px solid #1e2a1e;
-        border-top: 2px solid #7AC47A;
-        border-radius: 4px;
-        padding: 44px 40px;
-        box-shadow: 0 0 80px rgba(122, 196, 122, 0.08), 0 20px 60px rgba(0,0,0,0.6);
-        backdrop-filter: blur(20px);
-        -webkit-backdrop-filter: blur(20px);
-    }}
-
-    .login-badge {{
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 9px;
-        color: #7AC47A;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        margin-bottom: 24px;
-        opacity: 0.8;
-    }}
-
-    .login-badge::before {{
-        content: '> ';
-        opacity: 0.5;
-    }}
-
-   .login-title {{
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 20px;
-        font-weight: 700;
-        color: #e0e8e0;
-        margin-bottom: 4px;
-        letter-spacing: -0.5px;
-    }}
-
-    .login-sub {{
-        font-family: 'Inter', sans-serif;
-        font-size: 12px;
-        color: #8a9a8a;
-        margin-bottom: 32px;
-        letter-spacing: 0.3px;
+    /* Card principal */
+    [data-testid="column"]:nth-child(2) > div:first-child {{
+        background: rgba(6, 10, 6, 0.88) !important;
+        border: 1px solid #1a2a1a !important;
+        border-top: 2px solid #7AC47A !important;
+        border-radius: 4px !important;
+        padding: 40px 32px !important;
+        backdrop-filter: blur(20px) !important;
+        -webkit-backdrop-filter: blur(20px) !important;
+        box-shadow: 0 0 60px rgba(122,196,122,0.07), 0 24px 48px rgba(0,0,0,0.6) !important;
+        margin-top: 40px !important;
     }}
 
     .stTextInput > div > div > input {{
-        background-color: rgba(255,255,255,0.04) !important;
-        border: 1px solid #1e2a1e !important;
-        border-radius: 2px !important;
-        color: #d0d0d0 !important;
+        background-color: rgba(255,255,255,0.05) !important;
+        border: 1px solid #2a3a2a !important;
+        border-radius: 3px !important;
+        color: #c8d8c8 !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 12px !important;
         padding: 10px 14px !important;
     }}
     .stTextInput > div > div > input:focus {{
         border-color: #7AC47A !important;
-        box-shadow: 0 0 0 1px rgba(122,196,122,0.3) !important;
-        background-color: rgba(122,196,122,0.04) !important;
+        box-shadow: 0 0 0 1px rgba(122,196,122,0.25) !important;
+    }}
+    .stTextInput > div > div > input::placeholder {{
+        color: #3a4a3a !important;
     }}
     .stTextInput label {{
         font-family: 'JetBrains Mono', monospace !important;
@@ -232,14 +224,15 @@ def render_login(settings):
         font-weight: 500 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        color: #3d5c3d !important;
+        color: #7AC47A !important;
+        opacity: 0.7 !important;
     }}
 
     div[data-testid="stButton"] button {{
         background-color: transparent !important;
         color: #7AC47A !important;
         border: 1px solid #7AC47A !important;
-        border-radius: 2px !important;
+        border-radius: 3px !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 11px !important;
         font-weight: 500 !important;
@@ -254,41 +247,57 @@ def render_login(settings):
         color: #0a0a0a !important;
     }}
 
+    .login-logo {{
+        text-align: left;
+        margin-bottom: 20px;
+    }}
+    .login-badge {{
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        color: #7AC47A;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 12px;
+        opacity: 0.9;
+    }}
+    .login-title {{
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 22px;
+        font-weight: 700;
+        color: #e0e8e0;
+        margin-bottom: 6px;
+    }}
+    .login-sub {{
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        color: #6a8a6a;
+        margin-bottom: 28px;
+    }}
     .login-divider {{
         border: none;
-        border-top: 1px solid #0f1a0f;
-        margin: 24px 0;
+        border-top: 1px solid #1a2a1a;
+        margin: 20px 0;
     }}
-
     .login-footer {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 9px;
         color: #2a3a2a;
         text-align: center;
-        margin-top: 20px;
+        margin-top: 16px;
         letter-spacing: 1px;
     }}
-
-    [data-testid="stToolbar"] {{ display: none !important; }}
-    [data-testid="stDecoration"] {{ display: none !important; }}
-    [data-testid="stStatusWidget"] {{ display: none !important; }}
-    .stApp > header {{ display: none !important; }}
-    .stApp {{ margin-top: -80px; }}
     </style>
     """, unsafe_allow_html=True)
 
-    col_izq, col_centro, col_der = st.columns([1, 1.1, 1])
+    col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
 
     with col_centro:
-        st.markdown('<div class="login-card">', unsafe_allow_html=True)
-
-        # Logo
-        logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
-        if os.path.exists(logo_path):
-            st.image(logo_path, width=130)
+        # Logo como HTML con base64
+        if logo_b64:
+            st.markdown(f'<div class="login-logo"><img src="data:image/jpeg;base64,{logo_b64}" style="height:48px;border-radius:4px;"></div>', unsafe_allow_html=True)
 
         st.markdown("""
-            <div class="login-badge">secure access portal</div>
+            <div class="login-badge">&gt; secure access portal</div>
             <div class="login-title">IT Knowledge Core</div>
             <div class="login-sub">Ingresa con tu cuenta corporativa @techcrg.com</div>
         """, unsafe_allow_html=True)
@@ -321,7 +330,6 @@ def render_login(settings):
             st.rerun()
 
         st.markdown('<div class="login-footer">CRG Solutions © 2026 · Acceso restringido</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)
            
        
     

@@ -618,7 +618,7 @@ def render_agente(df, repo):
 
 def render_supervisor(df: pd.DataFrame, repo, settings):
     show_info_header(
-        "🛠 Supervisor | Panel de Gobierno",
+        " Supervisor | Panel de Gobierno",
         "Aprueba/rechaza solicitudes y administra el catálogo (agregar/editar/eliminar)."
     )
 
@@ -660,16 +660,60 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
 
             fila = en_rev[en_rev["programa_norm"] == programa_norm_sel].iloc[0]
             st.markdown("####  Detalle")
-            st.json({
-                "programa": safe_str(fila.get("programa")),
-                "estado": safe_str(fila.get("estado")),
-                "version": safe_str(fila.get("version")),
-                "compatibilidad": safe_str(fila.get("compatibilidad")),
-                "licencia": safe_str(fila.get("licencia")),
-                "periodo": safe_str(fila.get("periodo")),
-                "descripcion": safe_str(fila.get("descripcion")),
-                "fecha_revision": safe_str(fila.get("fecha_revision")),
-            })
+
+            programa = safe_str(fila.get("programa"))
+            estado = safe_str(fila.get("estado"))
+            version = safe_str(fila.get("version")) or "No especificada"
+            compat = safe_str(fila.get("compatibilidad")) or "No especificada"
+            licencia = safe_str(fila.get("licencia")) or "No especificada"
+            periodo = safe_str(fila.get("periodo")) or "No definido"
+            descripcion = safe_str(fila.get("descripcion")) or "Sin descripción"
+            fecha = safe_str(fila.get("fecha_revision")) or "No registrada"
+
+            estado_color = "#7AC47A" if estado == "Permitida" else "#FFB347" if estado == "En revisión" else "#FF6B6B"
+
+            st.markdown(f"""
+<div style="
+    background: rgba(122,196,122,0.04);
+    border: 1px solid rgba(122,196,122,0.15);
+    border-left: 3px solid {estado_color};
+    border-radius: 6px;
+    padding: 20px 24px;
+    margin-bottom: 16px;
+">
+    <div style="font-size:20px;font-weight:700;color:#F0F0F0;margin-bottom:4px;">{programa}</div>
+    <div style="display:inline-block;background:{estado_color}22;border:1px solid {estado_color}44;
+         color:{estado_color};font-size:11px;padding:2px 10px;border-radius:4px;margin-bottom:16px;">
+         {estado}
+    </div>
+    <table style="width:100%;border-collapse:collapse;">
+        <tr>
+            <td style="color:#888;font-size:11px;padding:5px 0;width:40%;">Versión</td>
+            <td style="color:#D0D0D0;font-size:12px;padding:5px 0;">{version}</td>
+        </tr>
+        <tr>
+            <td style="color:#888;font-size:11px;padding:5px 0;">Compatibilidad</td>
+            <td style="color:#D0D0D0;font-size:12px;padding:5px 0;">{compat}</td>
+        </tr>
+        <tr>
+            <td style="color:#888;font-size:11px;padding:5px 0;">Licencia</td>
+            <td style="color:#D0D0D0;font-size:12px;padding:5px 0;">{licencia}</td>
+        </tr>
+        <tr>
+            <td style="color:#888;font-size:11px;padding:5px 0;">Periodo</td>
+            <td style="color:#D0D0D0;font-size:12px;padding:5px 0;">{periodo}</td>
+        </tr>
+        <tr>
+            <td style="color:#888;font-size:11px;padding:5px 0;">Descripción</td>
+            <td style="color:#D0D0D0;font-size:12px;padding:5px 0;">{descripcion}</td>
+        </tr>
+        <tr>
+            <td style="color:#888;font-size:11px;padding:5px 0;">Fecha solicitud</td>
+            <td style="color:#D0D0D0;font-size:12px;padding:5px 0;">{fecha}</td>
+        </tr>
+    </table>
+</div>
+""", unsafe_allow_html=True)
 
             motivo = st.text_input("Motivo rechazo (solo si rechaza)", key="motivo_rechazo")
 
@@ -695,10 +739,10 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
         st.markdown("### Administración del catálogo")
         st.caption(f"Backend activo: {settings.backend}")
 
-        gestion_tab1, gestion_tab2, gestion_tab3 = st.tabs(["➕ Agregar", "✏️ Editar", "🗑️ Eliminar"])
+        gestion_tab1, gestion_tab2, gestion_tab3 = st.tabs([" Agregar", " Editar", " Eliminar"])
 
         with gestion_tab1:
-            st.markdown("#### ➕ Agregar aplicación")
+            st.markdown("####  Agregar aplicación")
             df_all = asegurar_columnas(st.session_state.df)
 
             with st.form("form_add_app", clear_on_submit=True):
@@ -737,11 +781,11 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
                             df2 = pd.concat([df_all, pd.DataFrame([nuevo])], ignore_index=True)
                             df2 = guardar_y_recargar(repo, df2)
                             st.session_state.df = asegurar_columnas(df2)
-                            show_success("✅ Agregado y guardado.")
+                            show_success(" Agregado y guardado.")
                             st.rerun()
 
         with gestion_tab2:
-            st.markdown("#### ✏️ Editar aplicación")
+            st.markdown("####  Editar aplicación")
             df_all = asegurar_columnas(st.session_state.df).sort_values("programa").reset_index(drop=True)
 
             if df_all.empty:
@@ -787,11 +831,11 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
                             df2["programa_norm"] = df2["programa"].astype(str).apply(normalizar_texto)
                             df2 = guardar_y_recargar(repo, df2)
                             st.session_state.df = asegurar_columnas(df2)
-                            show_success("✅ Actualizado y guardado.")
+                            show_success(" Actualizado y guardado.")
                             st.rerun()
 
         with gestion_tab3:
-            st.markdown("#### 🗑️ Eliminar aplicación")
+            st.markdown("####  Eliminar aplicación")
             df_all = asegurar_columnas(st.session_state.df).sort_values("programa").reset_index(drop=True)
 
             if df_all.empty:
@@ -811,7 +855,7 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
                             df2 = eliminar_aplicacion(df_all, sel_norm)
                             df2 = guardar_y_recargar(repo, df2)
                             st.session_state.df = asegurar_columnas(df2)
-                            show_success("✅ Eliminado y guardado.")
+                            show_success(" Eliminado y guardado.")
                             st.rerun()
                         else:
                             st.error("Confirmación inválida.")

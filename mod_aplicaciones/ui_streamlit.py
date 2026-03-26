@@ -224,7 +224,7 @@ def render_login(settings):
         font-weight: 500 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        color: #7AC47A !important;
+        color: #A8C8A8 !important;
         opacity: 0.7 !important;
     }}
 
@@ -254,7 +254,7 @@ def render_login(settings):
     .login-badge {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 9px;
-        color: #7AC47A;
+        color: #A8C8A8;
         letter-spacing: 3px;
         text-transform: uppercase;
         margin-bottom: 12px;
@@ -264,13 +264,13 @@ def render_login(settings):
         font-family: 'JetBrains Mono', monospace;
         font-size: 22px;
         font-weight: 700;
-        color: #e0e8e0;
+        color: #E8F5E8;
         margin-bottom: 6px;
     }}
     .login-sub {{
         font-family: 'Inter', sans-serif;
         font-size: 12px;
-        color: #6a8a6a;
+        color: #7AC47A;
         margin-bottom: 28px;
     }}
     .login-divider {{
@@ -281,7 +281,7 @@ def render_login(settings):
     .login-footer {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 9px;
-        color: #2a3a2a;
+        color: #6a8a6a;
         text-align: center;
         margin-top: 16px;
         letter-spacing: 1px;
@@ -294,7 +294,7 @@ def render_login(settings):
     with col_centro:
         # Logo como HTML con base64
         if logo_b64:
-            st.markdown(f'<div class="login-logo"><img src="data:image/jpeg;base64,{logo_b64}" style="height:48px;border-radius:4px;"></div>', unsafe_allow_html=True)
+            st.markdown(f'<div class="login-logo"><img src="data:image/jpeg;base64,{logo_b64}" style="height:95px;border-radius:4px;"></div>', unsafe_allow_html=True)
 
         st.markdown("""
             <div class="login-badge">&gt; secure access portal</div>

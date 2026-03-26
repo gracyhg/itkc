@@ -863,6 +863,185 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
 # -------------------------
 # App principal
 # -------------------------
+def apply_global_css():
+    st.markdown("""
+    <style>
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap');
+
+    /* ── FONDO Y BASE ── */
+    [data-testid="stAppViewContainer"] {
+        background-color: #0d0f0d !important;
+    }
+    .stApp { background-color: #0d0f0d !important; }
+    .block-container { padding-top: 2rem !important; }
+
+    /* ── SIDEBAR ── */
+    [data-testid="stSidebar"] {
+        background-color: #0a0c0a !important;
+        border-right: 1px solid #1a2a1a !important;
+    }
+    [data-testid="stSidebar"] * {
+        font-family: 'Inter', sans-serif !important;
+        color: #B0B0B0 !important;
+    }
+    [data-testid="stSidebar"] .stRadio label {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 13px !important;
+        color: #C0C0C0 !important;
+    }
+    [data-testid="stSidebar"] button {
+        background: transparent !important;
+        border: 1px solid rgba(122,196,122,0.3) !important;
+        color: #7AC47A !important;
+        border-radius: 4px !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 11px !important;
+        letter-spacing: 1px !important;
+    }
+    [data-testid="stSidebar"] button:hover {
+        background: rgba(122,196,122,0.1) !important;
+    }
+
+    /* ── TIPOGRAFÍA GENERAL ── */
+    h1, h2, h3, h4 {
+        font-family: 'JetBrains Mono', monospace !important;
+        color: #E8F5E8 !important;
+        font-weight: 600 !important;
+    }
+    p, span, label, div {
+        font-family: 'Inter', sans-serif !important;
+        color: #C0C0C0 !important;
+    }
+
+    /* ── TABS ── */
+    .stTabs [data-baseweb="tab-list"] {
+        background: transparent !important;
+        border-bottom: 1px solid #1a2a1a !important;
+        gap: 8px !important;
+    }
+    .stTabs [data-baseweb="tab"] {
+        background: transparent !important;
+        color: #666 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        border: none !important;
+        padding: 8px 16px !important;
+    }
+    .stTabs [aria-selected="true"] {
+        background: transparent !important;
+        color: #7AC47A !important;
+        border-bottom: 2px solid #7AC47A !important;
+    }
+
+    /* ── INPUTS ── */
+    .stTextInput > div > div > input,
+    .stTextArea > div > div > textarea {
+        background-color: #111811 !important;
+        border: 1px solid #1a2a1a !important;
+        border-radius: 4px !important;
+        color: #E0E0E0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 13px !important;
+    }
+    .stTextInput > div > div > input:focus,
+    .stTextArea > div > div > textarea:focus {
+        border-color: #7AC47A !important;
+        box-shadow: 0 0 0 1px rgba(122,196,122,0.2) !important;
+    }
+    .stTextInput label, .stTextArea label {
+        font-family: 'Inter', sans-serif !important;
+        font-size: 12px !important;
+        color: #888 !important;
+    }
+
+    /* ── SELECTBOX ── */
+    .stSelectbox > div > div {
+        background-color: #111811 !important;
+        border: 1px solid #1a2a1a !important;
+        border-radius: 4px !important;
+        color: #E0E0E0 !important;
+    }
+    .stSelectbox label {
+        color: #888 !important;
+        font-size: 12px !important;
+    }
+
+    /* ── BOTONES ── */
+    div[data-testid="stButton"] button {
+        background-color: transparent !important;
+        color: #7AC47A !important;
+        border: 1px solid #7AC47A !important;
+        border-radius: 4px !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 12px !important;
+        font-weight: 500 !important;
+        letter-spacing: 1px !important;
+        transition: all 0.2s !important;
+    }
+    div[data-testid="stButton"] button:hover {
+        background-color: #7AC47A !important;
+        color: #0a0a0a !important;
+    }
+
+    /* ── MÉTRICAS ── */
+    [data-testid="stMetric"] {
+        background: #111811 !important;
+        border: 1px solid #1a2a1a !important;
+        border-radius: 6px !important;
+        padding: 16px !important;
+    }
+    [data-testid="stMetricLabel"] {
+        color: #888 !important;
+        font-size: 11px !important;
+        font-family: 'Inter', sans-serif !important;
+    }
+    [data-testid="stMetricValue"] {
+        color: #7AC47A !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 28px !important;
+    }
+
+    /* ── DATAFRAME ── */
+    [data-testid="stDataFrame"] {
+        border: 1px solid #1a2a1a !important;
+        border-radius: 6px !important;
+    }
+
+    /* ── ALERTS ── */
+    .stSuccess {
+        background: rgba(122,196,122,0.08) !important;
+        border: 1px solid rgba(122,196,122,0.3) !important;
+        color: #7AC47A !important;
+        border-radius: 4px !important;
+    }
+    .stError {
+        background: rgba(255,80,80,0.08) !important;
+        border: 1px solid rgba(255,80,80,0.3) !important;
+        border-radius: 4px !important;
+    }
+    .stWarning {
+        background: rgba(255,179,71,0.08) !important;
+        border: 1px solid rgba(255,179,71,0.3) !important;
+        border-radius: 4px !important;
+    }
+
+    /* ── EXPANDER ── */
+    .streamlit-expanderHeader {
+        background: #111811 !important;
+        border: 1px solid #1a2a1a !important;
+        border-radius: 4px !important;
+        color: #C0C0C0 !important;
+        font-family: 'Inter', sans-serif !important;
+        font-size: 12px !important;
+    }
+
+    /* ── DIVIDER ── */
+    hr {
+        border-color: #1a2a1a !important;
+    }
+    </style>
+    """, unsafe_allow_html=True)
 
 def main():
     
@@ -918,6 +1097,8 @@ def main():
     except Exception as e:
         st.error(f"No se pudo construir el repositorio: {e}")
         st.stop()
+
+    apply_global_css()    
 
     st.sidebar.title(APP_TITLE)
     st.sidebar.caption(f"Módulo: {MODULE_TITLE}")

@@ -908,10 +908,7 @@ def apply_global_css():
         color: #E8F5E8 !important;
         font-weight: 600 !important;
     }
-    p, span, label, div {
-        font-family: 'Inter', sans-serif !important;
-        color: #C0C0C0 !important;
-    }
+    
 
     /* ── TABS ── */
     .stTabs [data-baseweb="tab-list"] {

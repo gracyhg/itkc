@@ -840,7 +840,7 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
 # -------------------------
 
 def main():
-    st.set_page_config(page_title=f"{APP_TITLE} | {MODULE_TITLE}", layout="wide")
+    
     
 
     settings = load_settings(BASE_DIR)

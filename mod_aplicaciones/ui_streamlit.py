@@ -225,7 +225,7 @@ def render_login(settings):
         font-weight: 500 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        color: #E8F5E8; !important;
+        color: #B0B0B0 !important;
         
     }}
 
@@ -271,7 +271,7 @@ def render_login(settings):
     .login-sub {{
         font-family: 'Inter', sans-serif;
         font-size: 12px;
-        color: #7AC47A;
+        color: #AAAAAA
         margin-bottom: 28px;
     }}
     .login-divider {{
@@ -282,11 +282,11 @@ def render_login(settings):
     .login-footer {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 9px;
-        color: #E8F5E8;
+        color: #707070
         text-align: center;
         margin-top: 16px;
         letter-spacing: 1px;
-        opacity: 0.7 !important;
+        
     }}
     </style>
     """, unsafe_allow_html=True)

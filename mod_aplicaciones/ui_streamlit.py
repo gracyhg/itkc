@@ -129,100 +129,148 @@ def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
         st.error(f"Error de conexión: {e}")
         return None
     
+
 def render_login(settings):
-    st.markdown("""
+    import base64
+
+    # Cargar imagen de fondo en base64
+    bg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bg.jpg")
+    bg_b64 = ""
+    if os.path.exists(bg_path):
+        with open(bg_path, "rb") as f:
+            bg_b64 = base64.b64encode(f.read()).decode()
+
+    st.markdown(f"""
     <style>
-    @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=DM+Sans:wght@300;400;500&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Inter:wght@300;400;500&display=swap');
 
-    [data-testid="stAppViewContainer"] {
-        background-color: #f5f5f5;
-        background-image: radial-gradient(#d0d0d0 1px, transparent 1px);
-        background-size: 24px 24px;
-    }
-    [data-testid="stHeader"] { display: none; }
-    [data-testid="stSidebar"] { display: none; }
-    header { display: none !important; }
-    #MainMenu { display: none; }
-    footer { display: none; }
-    .block-container { padding-top: 3rem !important; }
+    [data-testid="stAppViewContainer"] {{
+        background-image: url("data:image/jpeg;base64,{bg_b64}");
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
+    }}
+    [data-testid="stAppViewContainer"]::before {{
+        content: '';
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.75);
+        backdrop-filter: blur(2px);
+        z-index: 0;
+    }}
+    [data-testid="stHeader"] {{ display: none; }}
+    [data-testid="stSidebar"] {{ display: none; }}
+    header {{ display: none !important; }}
+    #MainMenu {{ display: none; }}
+    footer {{ display: none; }}
+    .block-container {{
+        padding-top: 2rem !important;
+        position: relative;
+        z-index: 1;
+    }}
 
-    .stTextInput > div > div > input {
-        background-color: #ffffff !important;
-        border: 1px solid #d0d0d0 !important;
-        border-radius: 4px !important;
-        color: #1a1a1a !important;
-        font-family: 'DM Sans', sans-serif !important;
-        font-size: 13px !important;
+    .login-card {{
+        background: rgba(10, 12, 16, 0.85);
+        border: 1px solid #1e2a1e;
+        border-top: 2px solid #7AC47A;
+        border-radius: 2px;
+        padding: 44px 40px;
+        box-shadow: 0 0 80px rgba(122, 196, 122, 0.08), 0 20px 60px rgba(0,0,0,0.5);
+        backdrop-filter: blur(12px);
+    }}
+
+    .login-badge {{
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 9px;
+        color: #7AC47A;
+        letter-spacing: 3px;
+        text-transform: uppercase;
+        margin-bottom: 24px;
+        opacity: 0.8;
+    }}
+
+    .login-badge::before {{
+        content: '> ';
+        opacity: 0.5;
+    }}
+
+    .login-title {{
+        font-family: 'JetBrains Mono', monospace;
+        font-size: 20px;
+        font-weight: 700;
+        color: #f0f0f0;
+        margin-bottom: 4px;
+        letter-spacing: -0.5px;
+    }}
+
+    .login-sub {{
+        font-family: 'Inter', sans-serif;
+        font-size: 12px;
+        color: #4a5568;
+        margin-bottom: 32px;
+        letter-spacing: 0.3px;
+    }}
+
+    .stTextInput > div > div > input {{
+        background-color: rgba(255,255,255,0.04) !important;
+        border: 1px solid #1e2a1e !important;
+        border-radius: 2px !important;
+        color: #d0d0d0 !important;
+        font-family: 'JetBrains Mono', monospace !important;
+        font-size: 12px !important;
         padding: 10px 14px !important;
-    }
-    .stTextInput > div > div > input:focus {
+    }}
+    .stTextInput > div > div > input:focus {{
         border-color: #7AC47A !important;
-        box-shadow: 0 0 0 2px rgba(122,196,122,0.15) !important;
-    }
-    .stTextInput label {
-        font-family: 'DM Mono', monospace !important;
+        box-shadow: 0 0 0 1px rgba(122,196,122,0.3) !important;
+        background-color: rgba(122,196,122,0.04) !important;
+    }}
+    .stTextInput label {{
+        font-family: 'JetBrains Mono', monospace !important;
         font-size: 10px !important;
         font-weight: 500 !important;
-        letter-spacing: 1.5px !important;
+        letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        color: #888 !important;
-    }
-    div[data-testid="stButton"] button {
-        background-color: #1a1a1a !important;
-        color: #ffffff !important;
-        border: none !important;
-        border-radius: 4px !important;
-        font-family: 'DM Mono', monospace !important;
+        color: #3d5c3d !important;
+    }}
+
+    div[data-testid="stButton"] button {{
+        background-color: transparent !important;
+        color: #7AC47A !important;
+        border: 1px solid #7AC47A !important;
+        border-radius: 2px !important;
+        font-family: 'JetBrains Mono', monospace !important;
         font-size: 11px !important;
         font-weight: 500 !important;
-        letter-spacing: 1.5px !important;
+        letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        padding: 8px 20px !important;
-        width: auto !important;
-        min-width: 120px !important;
-    }
-    div[data-testid="stButton"] button:hover {
+        padding: 8px 16px !important;
+        width: 100% !important;
+        transition: all 0.2s !important;
+    }}
+    div[data-testid="stButton"] button:hover {{
         background-color: #7AC47A !important;
-        color: #1a1a1a !important;
-    }
-    .login-card {
-        background: #ffffff;
-        border: 1px solid #e0e0e0;
-        border-radius: 8px;
-        padding: 40px 36px;
-        box-shadow: 0 2px 20px rgba(0,0,0,0.06);
-    }
-    .login-tag {
-        display: inline-block;
-        background: #7AC47A;
-        color: #1a1a1a;
-        font-family: 'DM Mono', monospace;
+        color: #0a0a0a !important;
+    }}
+
+    .login-divider {{
+        border: none;
+        border-top: 1px solid #0f1a0f;
+        margin: 24px 0;
+    }}
+
+    .login-footer {{
+        font-family: 'JetBrains Mono', monospace;
         font-size: 9px;
-        font-weight: 500;
-        letter-spacing: 2px;
-        text-transform: uppercase;
-        padding: 3px 10px;
-        border-radius: 2px;
-        margin-bottom: 20px;
-    }
-    .login-title {
-        font-family: 'DM Sans', sans-serif;
-        font-size: 22px;
-        font-weight: 500;
-        color: #1a1a1a;
-        margin-bottom: 4px;
-        line-height: 1.2;
-    }
-    .login-sub {
-        font-family: 'DM Sans', sans-serif;
-        font-size: 12px;
-        color: #999;
-        margin-bottom: 28px;
-    }
+        color: #2a3a2a;
+        text-align: center;
+        margin-top: 20px;
+        letter-spacing: 1px;
+    }}
     </style>
     """, unsafe_allow_html=True)
 
-    col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
+    col_izq, col_centro, col_der = st.columns([1, 1.1, 1])
 
     with col_centro:
         st.markdown('<div class="login-card">', unsafe_allow_html=True)
@@ -230,19 +278,19 @@ def render_login(settings):
         # Logo
         logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
         if os.path.exists(logo_path):
-            st.image(logo_path, width=140)
+            st.image(logo_path, width=130)
 
         st.markdown("""
-            <div class="login-tag">IT Knowledge Core</div>
-            <div class="login-title">Bienvenido</div>
-            <div class="login-sub">Ingresa con tu cuenta corporativa</div>
+            <div class="login-badge">secure access portal</div>
+            <div class="login-title">IT Knowledge Core</div>
+            <div class="login-sub">Ingresa con tu cuenta corporativa @techcrg.com</div>
         """, unsafe_allow_html=True)
 
-        correo = st.text_input("Correo corporativo", key="login_correo", placeholder="usuario@techcrg.com")
+        correo = st.text_input("Correo", key="login_correo", placeholder="usuario@techcrg.com")
         password = st.text_input("Contraseña", type="password", key="login_password", placeholder="••••••••")
 
-        st.markdown("<div style='margin-top:8px'>", unsafe_allow_html=True)
-        if st.button("Ingresar →"):
+        st.markdown("<div style='margin-top:12px'>", unsafe_allow_html=True)
+        if st.button("→ Iniciar sesión"):
             if not correo.endswith("@techcrg.com"):
                 st.error("Solo se permiten correos @techcrg.com")
                 return
@@ -252,10 +300,10 @@ def render_login(settings):
                 st.session_state.pantalla = "app"
                 st.rerun()
             else:
-                st.error("Correo o contraseña incorrectos.")
+                st.error("Credenciales incorrectas.")
         st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("<hr style='border:none;border-top:1px solid #f0f0f0;margin:20px 0'>", unsafe_allow_html=True)
+        st.markdown('<hr class="login-divider">', unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         if col1.button("Crear cuenta"):
@@ -265,8 +313,11 @@ def render_login(settings):
             st.session_state.pantalla = "olvide_password"
             st.rerun()
 
-        st.markdown('</div>', unsafe_allow_html=True)
-
+        st.markdown('<div class="login-footer">CRG Solutions © 2026 · Acceso restringido</div>', unsafe_allow_html=True)
+        st.markdown('</div>', unsafe_allow_html=True)       
+       
+    
+  
 # -------------------------
 # REGISTRO
 # -------------------------

@@ -195,13 +195,16 @@ def render_login(settings):
     }}
 
     .stTextInput > div > div > input {{
-        background-color: rgba(255,255,255,0.06) !important;
+        background: rgba(122, 196, 122, 0.04) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
         border: 1px solid rgba(122,196,122,0.2) !important;
         border-radius: 6px !important;
         color: #E0E0E0 !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 12px !important;
         padding: 10px 14px !important;
+    
     }}
     .stTextInput > div > div > input:focus {{
         border-color: #7AC47A !important;

@@ -224,7 +224,7 @@ def render_login(settings):
         font-weight: 500 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        color: #A8C8A8 !important;
+        color: #E8F5E8; !important;
         opacity: 0.7 !important;
     }}
 
@@ -281,7 +281,7 @@ def render_login(settings):
     .login-footer {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 9px;
-        color: #6a8a6a;
+        color: #E8F5E8;
         text-align: center;
         margin-top: 16px;
         letter-spacing: 1px;

@@ -133,14 +133,12 @@ def verificar_login(correo: str, password: str, conn_str: str) -> dict | None:
 def render_login(settings):
     import base64
 
-    # Cargar imagen de fondo en base64
     bg_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "bg.jpg")
     bg_b64 = ""
     if os.path.exists(bg_path):
         with open(bg_path, "rb") as f:
             bg_b64 = base64.b64encode(f.read()).decode()
 
-    # Cargar logo en base64
     logo_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.jpg")
     logo_b64 = ""
     if os.path.exists(logo_path):
@@ -162,8 +160,7 @@ def render_login(settings):
         content: '';
         position: fixed;
         inset: 0;
-        background: rgba(0, 0, 0, 0.72);
-        backdrop-filter: blur(3px);
+        background: rgba(0, 0, 0, 0.55);
         z-index: 0;
     }}
 
@@ -172,51 +169,53 @@ def render_login(settings):
     [data-testid="stDecoration"],
     [data-testid="stStatusWidget"],
     .stApp > header,
-    header,
-    #MainMenu,
-    footer {{
+    header, #MainMenu, footer {{
         display: none !important;
-        visibility: hidden !important;
         height: 0 !important;
     }}
 
     .stApp {{ margin-top: 0 !important; }}
-
     .block-container {{
         padding-top: 0 !important;
         padding-bottom: 0 !important;
         position: relative;
         z-index: 1;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
     }}
 
-    /* Card principal */
-    [data-testid="column"]:nth-child(2) > div:first-child {{
-        background: rgba(6, 10, 6, 0.88) !important;
-        border: 1px solid #1a2a1a !important;
+    /* Glassmorphism card */
+    .glass-card {{
+        background: rgba(10, 20, 10, 0.55) !important;
+        backdrop-filter: blur(24px) !important;
+        -webkit-backdrop-filter: blur(24px) !important;
+        border: 1px solid rgba(122, 196, 122, 0.15) !important;
         border-top: 2px solid #7AC47A !important;
-        border-radius: 4px !important;
-        padding: 40px 32px !important;
-        backdrop-filter: blur(20px) !important;
-        -webkit-backdrop-filter: blur(20px) !important;
-        box-shadow: 0 0 60px rgba(122,196,122,0.07), 0 24px 48px rgba(0,0,0,0.6) !important;
-        margin-top: 40px !important;
+        border-radius: 12px !important;
+        padding: 44px 40px !important;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 60px rgba(122,196,122,0.05) !important;
+        max-width: 420px;
+        margin: 0 auto;
     }}
 
     .stTextInput > div > div > input {{
-        background-color: rgba(255,255,255,0.05) !important;
-        border: 1px solid #2a3a2a !important;
-        border-radius: 3px !important;
-        color: #c8d8c8 !important;
+        background-color: rgba(255,255,255,0.06) !important;
+        border: 1px solid rgba(122,196,122,0.2) !important;
+        border-radius: 6px !important;
+        color: #E0E0E0 !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 12px !important;
         padding: 10px 14px !important;
     }}
     .stTextInput > div > div > input:focus {{
         border-color: #7AC47A !important;
-        box-shadow: 0 0 0 1px rgba(122,196,122,0.25) !important;
+        box-shadow: 0 0 0 1px rgba(122,196,122,0.3) !important;
+        background-color: rgba(122,196,122,0.05) !important;
     }}
     .stTextInput > div > div > input::placeholder {{
-        color: #A8C8A8; !important;
+        color: #404040 !important;
     }}
     .stTextInput label {{
         font-family: 'JetBrains Mono', monospace !important;
@@ -224,15 +223,14 @@ def render_login(settings):
         font-weight: 500 !important;
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
-        color: #E8F5E8; !important;
-        
+        color: #B0B0B0 !important;
     }}
 
     div[data-testid="stButton"] button {{
         background-color: transparent !important;
         color: #7AC47A !important;
         border: 1px solid #7AC47A !important;
-        border-radius: 3px !important;
+        border-radius: 6px !important;
         font-family: 'JetBrains Mono', monospace !important;
         font-size: 11px !important;
         font-weight: 500 !important;
@@ -246,67 +244,32 @@ def render_login(settings):
         background-color: #7AC47A !important;
         color: #0a0a0a !important;
     }}
-
-    .login-logo {{
-        text-align: left;
-        margin-bottom: 20px;
-    }}
-    .login-badge {{
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 9px;
-        color: #A8C8A8;
-        letter-spacing: 3px;
-        text-transform: uppercase;
-        margin-bottom: 12px;
-        opacity: 0.9;
-    }}
-    .login-title {{
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 22px;
-        font-weight: 700;
-        color: #E8F5E8;
-        margin-bottom: 6px;
-    }}
-    .login-sub {{
-        font-family: 'Inter', sans-serif;
-        font-size: 12px;
-        color: #7AC47A;
-        margin-bottom: 28px;
-    }}
-    .login-divider {{
-        border: none;
-        border-top: 1px solid #1a2a1a;
-        margin: 20px 0;
-    }}
-    .login-footer {{
-        font-family: 'JetBrains Mono', monospace;
-        font-size: 9px;
-        color: #E8F5E8;
-        text-align: center;
-        margin-top: 16px;
-        letter-spacing: 1px;
-        opacity: 0.7 !important;
-    }}
     </style>
+
+    <div class="glass-card">
+        <div style="margin-bottom:20px">
+            <img src="data:image/jpeg;base64,{logo_b64}" style="height:70px;border-radius:6px;">
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#7AC47A;
+             letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;opacity:0.9;">
+            &gt; secure access portal
+        </div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
+             color:#F0F0F0;margin-bottom:6px;">
+            IT Knowledge Core
+        </div>
+        <div style="font-family:'Inter',sans-serif;font-size:12px;color:#AAAAAA;margin-bottom:28px;">
+            Ingresa con tu cuenta corporativa @techcrg.com
+        </div>
+    </div>
     """, unsafe_allow_html=True)
 
+    # Campos del formulario centrados
     col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
-
     with col_centro:
-        # Logo como HTML con base64
-        if logo_b64:
-            st.markdown(f'<div class="login-logo"><img src="data:image/jpeg;base64,{logo_b64}" style="height:95px;border-radius:4px;"></div>', unsafe_allow_html=True)
-
-        st.markdown("""
-            <div class="login-badge">&gt; secure access portal</div>
-            <div class="login-title">IT Knowledge Core</div>
-            <div class="login-sub">Ingresa con tu cuenta corporativa @techcrg.com</div>
-        """, unsafe_allow_html=True)
-
         correo = st.text_input("Correo", key="login_correo", placeholder="usuario@techcrg.com")
         password = st.text_input("Contraseña", type="password", key="login_password", placeholder="••••••••")
 
-        st.markdown("<div style='margin-top:12px'>", unsafe_allow_html=True)
         if st.button("→ Iniciar sesión"):
             if not correo.endswith("@techcrg.com"):
                 st.error("Solo se permiten correos @techcrg.com")
@@ -318,9 +281,8 @@ def render_login(settings):
                 st.rerun()
             else:
                 st.error("Credenciales incorrectas.")
-        st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown('<hr class="login-divider">', unsafe_allow_html=True)
+        st.markdown("<hr style='border:none;border-top:1px solid rgba(122,196,122,0.1);margin:20px 0'>", unsafe_allow_html=True)
 
         col1, col2 = st.columns(2)
         if col1.button("Crear cuenta"):
@@ -330,7 +292,11 @@ def render_login(settings):
             st.session_state.pantalla = "olvide_password"
             st.rerun()
 
-        st.markdown('<div class="login-footer">CRG Solutions © 2026 · Acceso restringido</div>', unsafe_allow_html=True)
+        st.markdown("""
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#707070;
+            text-align:center;margin-top:16px;letter-spacing:1px;">
+            CRG Solutions © 2026 · Acceso restringido</div>
+        """, unsafe_allow_html=True)
            
        
     

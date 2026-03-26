@@ -176,28 +176,22 @@ def render_login(settings):
 
     .stApp {{ margin-top: 0 !important; }}
     .block-container {{
-        padding-top: 0 !important;
-        padding-bottom: 0 !important;
+        padding-top: 2rem !important;
+        padding-bottom: 2rem !important;
         position: relative;
         z-index: 1;
-        min-height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
     }}
 
-    /* Glassmorphism card */
-    .glass-card {{
+    /* Glassmorphism en la columna del centro */
+    [data-testid="column"]:nth-child(2) {{
         background: rgba(10, 20, 10, 0.55) !important;
         backdrop-filter: blur(24px) !important;
         -webkit-backdrop-filter: blur(24px) !important;
         border: 1px solid rgba(122, 196, 122, 0.15) !important;
         border-top: 2px solid #7AC47A !important;
         border-radius: 12px !important;
-        padding: 44px 40px !important;
+        padding: 36px 32px !important;
         box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 60px rgba(122,196,122,0.05) !important;
-        max-width: 420px;
-        margin: 0 auto;
     }}
 
     .stTextInput > div > div > input {{
@@ -245,28 +239,29 @@ def render_login(settings):
         color: #0a0a0a !important;
     }}
     </style>
-
-    <div class="glass-card">
-        <div style="margin-bottom:20px">
-            <img src="data:image/jpeg;base64,{logo_b64}" style="height:70px;border-radius:6px;">
-        </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#7AC47A;
-             letter-spacing:3px;text-transform:uppercase;margin-bottom:12px;opacity:0.9;">
-            &gt; secure access portal
-        </div>
-        <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
-             color:#F0F0F0;margin-bottom:6px;">
-            IT Knowledge Core
-        </div>
-        <div style="font-family:'Inter',sans-serif;font-size:12px;color:#AAAAAA;margin-bottom:28px;">
-            Ingresa con tu cuenta corporativa @techcrg.com
-        </div>
-    </div>
     """, unsafe_allow_html=True)
 
-    # Campos del formulario centrados
     col_izq, col_centro, col_der = st.columns([1, 1.2, 1])
+
     with col_centro:
+        # Logo
+        if logo_b64:
+            st.markdown(f'<img src="data:image/jpeg;base64,{logo_b64}" style="height:70px;border-radius:6px;margin-bottom:16px;">', unsafe_allow_html=True)
+
+        st.markdown("""
+            <div style="font-family:'JetBrains Mono',monospace;font-size:9px;color:#7AC47A;
+                 letter-spacing:3px;text-transform:uppercase;margin:16px 0 12px 0;opacity:0.9;">
+                &gt; secure access portal
+            </div>
+            <div style="font-family:'JetBrains Mono',monospace;font-size:22px;font-weight:700;
+                 color:#F0F0F0;margin-bottom:6px;">
+                IT Knowledge Core
+            </div>
+            <div style="font-family:'Inter',sans-serif;font-size:12px;color:#AAAAAA;margin-bottom:24px;">
+                Ingresa con tu cuenta corporativa @techcrg.com
+            </div>
+        """, unsafe_allow_html=True)
+
         correo = st.text_input("Correo", key="login_correo", placeholder="usuario@techcrg.com")
         password = st.text_input("Contraseña", type="password", key="login_password", placeholder="••••••••")
 

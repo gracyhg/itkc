@@ -169,14 +169,15 @@ def render_login(settings):
         z-index: 1;
     }}
 
-    .login-card {{
-        background: rgba(10, 12, 16, 0.85);
+     .login-card {{
+        background: rgba(8, 12, 8, 0.82);
         border: 1px solid #1e2a1e;
         border-top: 2px solid #7AC47A;
-        border-radius: 2px;
+        border-radius: 4px;
         padding: 44px 40px;
-        box-shadow: 0 0 80px rgba(122, 196, 122, 0.08), 0 20px 60px rgba(0,0,0,0.5);
-        backdrop-filter: blur(12px);
+        box-shadow: 0 0 80px rgba(122, 196, 122, 0.08), 0 20px 60px rgba(0,0,0,0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
     }}
 
     .login-badge {{
@@ -194,11 +195,11 @@ def render_login(settings):
         opacity: 0.5;
     }}
 
-    .login-title {{
+   .login-title {{
         font-family: 'JetBrains Mono', monospace;
         font-size: 20px;
         font-weight: 700;
-        color: #f0f0f0;
+        color: #e0e8e0;
         margin-bottom: 4px;
         letter-spacing: -0.5px;
     }}
@@ -206,7 +207,7 @@ def render_login(settings):
     .login-sub {{
         font-family: 'Inter', sans-serif;
         font-size: 12px;
-        color: #4a5568;
+        color: #8a9a8a;
         margin-bottom: 32px;
         letter-spacing: 0.3px;
     }}
@@ -267,6 +268,12 @@ def render_login(settings):
         margin-top: 20px;
         letter-spacing: 1px;
     }}
+
+    [data-testid="stToolbar"] {{ display: none !important; }}
+    [data-testid="stDecoration"] {{ display: none !important; }}
+    [data-testid="stStatusWidget"] {{ display: none !important; }}
+    .stApp > header {{ display: none !important; }}
+    .stApp {{ margin-top: -80px; }}
     </style>
     """, unsafe_allow_html=True)
 
@@ -314,7 +321,8 @@ def render_login(settings):
             st.rerun()
 
         st.markdown('<div class="login-footer">CRG Solutions © 2026 · Acceso restringido</div>', unsafe_allow_html=True)
-        st.markdown('</div>', unsafe_allow_html=True)       
+        st.markdown('</div>', unsafe_allow_html=True)
+           
        
     
   
@@ -627,7 +635,7 @@ def render_agente(df, repo):
             st.dataframe(df_f.drop(columns=["programa_norm"], errors="ignore"), use_container_width=True)
 
     st.divider()
-    st.subheader("📋 Catálogo completo")
+    st.subheader(" Catálogo completo")
     st.dataframe(df.drop(columns=["programa_norm"], errors="ignore"), use_container_width=True)
 
 
@@ -665,7 +673,7 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
     sup_tab1, sup_tab2 = st.tabs([" Solicitudes en revisión", " Gestión del catálogo"])
 
     with sup_tab1:
-        st.markdown("### 🧾 Bandeja de revisión")
+        st.markdown("###  Bandeja de revisión")
         df_all = asegurar_columnas(st.session_state.df)
         en_rev = df_all[df_all["estado"] == ESTADO_REVISION].copy()
 
@@ -678,7 +686,7 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
             programa_norm_sel = sel.split("(")[-1].replace(")", "").strip()
 
             fila = en_rev[en_rev["programa_norm"] == programa_norm_sel].iloc[0]
-            st.markdown("#### 📌 Detalle")
+            st.markdown("####  Detalle")
             st.json({
                 "programa": safe_str(fila.get("programa")),
                 "estado": safe_str(fila.get("estado")),
@@ -700,11 +708,11 @@ def render_supervisor(df: pd.DataFrame, repo, settings):
                 show_success(" Solicitud aprobada y guardada.")
                 st.rerun()
 
-            if col2.button("⛔ Rechazar", key="btn_rechazar", use_container_width=True):
+            if col2.button(" Rechazar", key="btn_rechazar", use_container_width=True):
                 df2 = actualizar_decision(df_all, programa_norm_sel, False, motivo)
                 df2 = guardar_y_recargar(repo, df2)
                 st.session_state.df = asegurar_columnas(df2)
-                show_success("⛔ Solicitud rechazada y guardada.")
+                show_success(" Solicitud rechazada y guardada.")
                 st.rerun()
 
             with st.expander("Ver todas las solicitudes en revisión"):

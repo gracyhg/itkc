@@ -225,7 +225,7 @@ def render_login(settings):
         letter-spacing: 2px !important;
         text-transform: uppercase !important;
         color: #E8F5E8; !important;
-        opacity: 0.7 !important;
+        
     }}
 
     div[data-testid="stButton"] button {{

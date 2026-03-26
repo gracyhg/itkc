@@ -875,11 +875,8 @@ def apply_global_css():
     .stApp { background-color: #0d0f0d !important; }
     .block-container { padding-top: 2rem !important; }
 
-    /* ── SIDEBAR ── */
-    [data-testid="stSidebar"] {
-        background-color: #0a0c0a !important;
-        border-right: 1px solid #1a2a1a !important;
-    }
+    
+    
     [data-testid="stSidebar"] * {
         font-family: 'Inter', sans-serif !important;
         color: #B0B0B0 !important;
